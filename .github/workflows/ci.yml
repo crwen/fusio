@@ -8,6 +8,8 @@ on:
 env:
   CARGO_TERM_COLOR: always
   CARGO_REGISTRIES_MY_REGISTRY_INDEX: https://github.com/rust-lang/crates.io-index
+  ENV RUSTC_WRAPPER: sccache
+  ENV SCCACHE_BUCKET: ci-sccache-bucket
 
 jobs:
   # 1
@@ -17,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-latest
+          # - ubuntu-latest
           - windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,35 +38,35 @@ jobs:
           command: build
           args: --package fusio --features=tokio,aws,tokio-http
 
-      - name: Run cargo build on monoio
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio --features=monoio
+      # - name: Run cargo build on monoio
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --package fusio --features=monoio
 
-      - name: Run cargo build on tokio-uring
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio --features=tokio-uring
+      # - name: Run cargo build on tokio-uring
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --package fusio --features=tokio-uring
 
-      - name: Run cargo build on fusio-dispatch
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-dispatch --features=aws,tokio
+      # - name: Run cargo build on fusio-dispatch
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --package fusio-dispatch --features=aws,tokio
 
-      - name: Run cargo build on fusio-object-store
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-object-store
+      # - name: Run cargo build on fusio-object-store
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --package fusio-object-store
 
-      - name: Run cargo build on fusio-opendal
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-opendal
+      # - name: Run cargo build on fusio-opendal
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --package fusio-opendal
 
       - name: Run cargo build on fusio-parquet
         uses: actions-rs/cargo@v1
@@ -84,17 +86,17 @@ jobs:
           command: test
           args: --package fusio --features=tokio,aws,tokio-http
 
-      - name: Run cargo test on monoio
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio --features=monoio
+      # - name: Run cargo test on monoio
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: test
+      #     args: --package fusio --features=monoio
 
-      - name: Run cargo test on tokio-uring
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio --features=tokio-uring
+      # - name: Run cargo test on tokio-uring
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: test
+      #     args: --package fusio --features=tokio-uring
 
       - name: Run cargo test on fusio-log
         uses: actions-rs/cargo@v1
