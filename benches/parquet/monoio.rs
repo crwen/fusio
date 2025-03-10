@@ -1,11 +1,11 @@
 use common::write_parquet;
-use criterion::{criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use monoio::RuntimeBuilder;
 use tempfile::tempdir;
 
 mod common;
 
-fn multi_write() {
+fn multi_write(c: &mut Criterion) {
     let tmp_dir = tempdir().unwrap();
     let path = fusio::path::Path::from_filesystem_path(tmp_dir.path())
         .unwrap()
@@ -24,10 +24,6 @@ fn multi_write() {
             });
         },
     );
-}
-
-fn multi_write(c: &mut Criterion) {
-    let tmp_dir = tempdir().unwrap();
 }
 
 criterion_group!(benches, multi_write);
