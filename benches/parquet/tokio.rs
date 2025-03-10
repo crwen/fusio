@@ -18,6 +18,8 @@ fn main() {
         .unwrap()
         .block_on(write_parquet(
             Arc::new(TokioFs),
-            fusio::path::Path::from_filesystem_path(tmp_dir.path()).unwrap(),
+            fusio::path::Path::from_filesystem_path(tmp_dir.path())
+                .unwrap()
+                .child("tokio"),
         ))
 }
