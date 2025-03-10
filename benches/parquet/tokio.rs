@@ -1,25 +1,32 @@
-use std::sync::Arc;
-
 use common::write_parquet;
-use fusio::disk::TokioFs;
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use tempfile::tempdir;
 use tokio::runtime::Builder;
 
 mod common;
 
-fn main() {
+fn multi_write(c: &mut Criterion) {
     let tmp_dir = tempdir().unwrap();
-    // let _ = std::fs::remove_dir_all("/tmp/tonbo/parquet");
-    // let _ = std::fs::create_dir_all("/tmp/tonbo/parquet");
-    Builder::new_multi_thread()
-        .enable_all()
-        .worker_threads(8)
-        .build()
+
+    let path = fusio::path::Path::from_filesystem_path(tmp_dir.path())
         .unwrap()
-        .block_on(write_parquet(
-            Arc::new(TokioFs),
-            fusio::path::Path::from_filesystem_path(tmp_dir.path())
-                .unwrap()
-                .child("tokio"),
-        ))
+        .child("tokio");
+
+    c.bench_with_input(
+        BenchmarkId::new("parquet_tokio", path.clone()),
+        &path,
+        |b, path| {
+            b.iter(|| {
+                Builder::new_multi_thread()
+                    .enable_all()
+                    .worker_threads(8)
+                    .build()
+                    .unwrap()
+                    .block_on(write_parquet(path.clone()));
+            });
+        },
+    );
 }
+
+criterion_group!(benches, multi_write);
+criterion_main!(benches);

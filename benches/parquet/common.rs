@@ -4,7 +4,7 @@ use arrow::{
     array::{ArrayRef, RecordBatch, StringArray, UInt64Array, UInt8Array},
     datatypes::{DataType, Field, Schema, SchemaRef},
 };
-use fusio::{fs::OpenOptions, path::Path, DynFs};
+use fusio::{disk::LocalFs, fs::OpenOptions, path::Path, DynFs};
 use fusio_parquet::writer::AsyncWriter;
 use parquet::arrow::AsyncArrowWriter;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -12,7 +12,8 @@ use rand::{distributions::Alphanumeric, thread_rng, Rng};
 const RECORD_PER_BATCH: usize = 1000;
 const ITERATION_TIMES: usize = 500_000;
 
-pub(crate) async fn write_parquet(fs: Arc<dyn DynFs>, path: Path) {
+pub(crate) async fn write_parquet(path: Path) {
+    let fs = LocalFs {};
     let options = OpenOptions::default().create(true).write(true);
 
     let writer = AsyncWriter::new(Box::new(fs.open_options(&path, options).await.unwrap()));
