@@ -17,12 +17,11 @@ fn multi_write(c: &mut Criterion) {
         &path,
         |b, path| {
             b.iter(|| {
-                Builder::new_multi_thread()
+                Builder::new_current_thread()
                     .enable_all()
-                    .worker_threads(8)
                     .build()
                     .unwrap()
-                    .block_on(write_parquet(path.clone()));
+                    .block_on(write_parquet(path.clone()))
             });
         },
     );

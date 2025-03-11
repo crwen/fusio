@@ -12,7 +12,7 @@ fn multi_write(c: &mut Criterion) {
         .child("monoio");
 
     c.bench_with_input(
-        BenchmarkId::new("parquet_tokio", path.clone()),
+        BenchmarkId::new("parquet_monoio", path.clone()),
         &path,
         |b, path| {
             b.iter(|| {
