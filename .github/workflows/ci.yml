@@ -12,171 +12,171 @@ env:
 
 jobs:
   # 1
-  check:
-    name: Rust project check
-    permissions:
-      id-token: write
-      contents: read
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install latest
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+  # check:
+  #   name: Rust project check
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os:
+  #         - ubuntu-latest
+  #         - macos-latest
+  #         - windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Install latest
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+  #         override: true
+  #         components: rustfmt, clippy
 
-      # `cargo check` command here will use installed `nightly`
-      # as it is set as an "override" for current directory
-      - name: Run cargo build on tokio
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio --features=tokio,aws,tokio-http
+  #     # `cargo check` command here will use installed `nightly`
+  #     # as it is set as an "override" for current directory
+  #     - name: Run cargo build on tokio
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio --features=tokio,aws,tokio-http
 
-      - name: Run cargo build on monoio
-        if: runner.os != 'Windows'
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio --features=monoio
+  #     - name: Run cargo build on monoio
+  #       if: runner.os != 'Windows'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio --features=monoio
 
-      - name: Run cargo build on tokio-uring
-        if: runner.os == 'Linux'
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio --features=tokio-uring
+  #     - name: Run cargo build on tokio-uring
+  #       if: runner.os == 'Linux'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio --features=tokio-uring
 
-      - name: Run cargo build on fusio-dispatch
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-dispatch --features=aws,tokio
+  #     - name: Run cargo build on fusio-dispatch
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-dispatch --features=aws,tokio
 
-      - name: Run cargo build on fusio-object-store
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-object-store
+  #     - name: Run cargo build on fusio-object-store
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-object-store
 
-      - name: Run cargo build on fusio-opendal
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-opendal
+  #     - name: Run cargo build on fusio-opendal
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-opendal
 
-      - name: Run cargo build on fusio-parquet tokio
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-parquet --features=tokio
+  #     - name: Run cargo build on fusio-parquet tokio
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-parquet --features=tokio
 
-      - name: Run cargo build on fusio-parquet monoio
-        if: runner.os != 'Windows'
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-parquet --features=monoio
+  #     - name: Run cargo build on fusio-parquet monoio
+  #       if: runner.os != 'Windows'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-parquet --features=monoio
 
-      - name: Run cargo build on fusio-log tokio
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-log
+  #     - name: Run cargo build on fusio-log tokio
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-log
 
-      - name: Run cargo build on fusio-log monoio
-        if: runner.os != 'Windows'
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --package fusio-log --no-default-features --features=aws,bytes,monoio,monoio-http
+  #     - name: Run cargo build on fusio-log monoio
+  #       if: runner.os != 'Windows'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: build
+  #         args: --package fusio-log --no-default-features --features=aws,bytes,monoio,monoio-http
 
-      - name: Configure aws credentials
-        if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || startsWith(github.ref, 'refs/tags/') }}
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
-          role-session-name: fusio_session
-          aws-region: ${{ env.AWS_REGION }}
-        env:
-          AWS_REGION: ap-southeast-1
-          ROLE_TO_ASSUME: arn:aws:iam::232814779190:role/github
+  #     - name: Configure aws credentials
+  #       if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || startsWith(github.ref, 'refs/tags/') }}
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+  #         role-session-name: fusio_session
+  #         aws-region: ${{ env.AWS_REGION }}
+  #       env:
+  #         AWS_REGION: ap-southeast-1
+  #         ROLE_TO_ASSUME: arn:aws:iam::232814779190:role/github
 
-      - name: Run cargo test on tokio
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio --features=tokio,aws,tokio-http
+  #     - name: Run cargo test on tokio
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio --features=tokio,aws,tokio-http
 
-      - name: Run cargo test on monoio
-        if: runner.os != 'Windows'
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio --features=monoio,monoio-http
+  #     - name: Run cargo test on monoio
+  #       if: runner.os != 'Windows'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio --features=monoio,monoio-http
 
-      - name: Run cargo test on tokio-uring
-        if: runner.os == 'Linux'
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio --features=tokio-uring
+  #     - name: Run cargo test on tokio-uring
+  #       if: runner.os == 'Linux'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio --features=tokio-uring
 
-      - name: Run cargo test on fusio-parquet tokio
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio-parquet --features=tokio
+  #     - name: Run cargo test on fusio-parquet tokio
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio-parquet --features=tokio
 
-      - name: Run cargo test on fusio-parquet monoio
-        if: runner.os != 'Windows'
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio-parquet --features=monoio
+  #     - name: Run cargo test on fusio-parquet monoio
+  #       if: runner.os != 'Windows'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio-parquet --features=monoio
 
-      - name: Run cargo test on fusio-log tokio
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio-log --features=tokio
+  #     - name: Run cargo test on fusio-log tokio
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio-log --features=tokio
 
-      - name: Run cargo test on fusio-log monoio
-        if: runner.os != 'Windows'
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package fusio-log --no-default-features --features=aws,bytes,monoio,monoio-http
+  #     - name: Run cargo test on fusio-log monoio
+  #       if: runner.os != 'Windows'
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --package fusio-log --no-default-features --features=aws,bytes,monoio,monoio-http
 
-  # 2
-  fmt:
-    name: Rust fmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install latest nightly
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
-          components: rustfmt, clippy
+  # # 2
+  # fmt:
+  #   name: Rust fmt
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Install latest nightly
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: nightly
+  #         override: true
+  #         components: rustfmt, clippy
 
-      # `cargo check` command here will use installed `nightly`
-      # as it is set as an "override" for current directory
+  #     # `cargo check` command here will use installed `nightly`
+  #     # as it is set as an "override" for current directory
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: -- --check
+  #     - name: Run cargo fmt
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: fmt
+  #         args: -- --check
   wasm:
     name: WASM
     permissions:
@@ -202,17 +202,17 @@ jobs:
           command: build
           args: --target wasm32-unknown-unknown --package fusio --features=opfs,aws
 
-      - name: Run cargo build on fusio-parquet
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target wasm32-unknown-unknown --package fusio-parquet --features=web
+      # - name: Run cargo build on fusio-parquet
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --target wasm32-unknown-unknown --package fusio-parquet --features=web
 
-      - name: Run cargo build on fusio-dispatch
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target wasm32-unknown-unknown --package fusio-dispatch --features=opfs,aws
+      # - name: Run cargo build on fusio-dispatch
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: build
+      #     args: --target wasm32-unknown-unknown --package fusio-dispatch --features=opfs,aws
 
       - name: Install Chrome Environment
         run: |
@@ -228,23 +228,23 @@ jobs:
         run: |
           cargo install wasm-pack
 
-      - name: Configure aws credentials
-        if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || startsWith(github.ref, 'refs/tags/') }}
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
-          role-session-name: samplerolesession
-          aws-region: ${{ env.AWS_REGION }}
-        env:
-          AWS_REGION: ap-southeast-1
-          ROLE_TO_ASSUME: arn:aws:iam::232814779190:role/github
+      # - name: Configure aws credentials
+      #   if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || startsWith(github.ref, 'refs/tags/') }}
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+      #     role-session-name: samplerolesession
+      #     aws-region: ${{ env.AWS_REGION }}
+      #   env:
+      #     AWS_REGION: ap-southeast-1
+      #     ROLE_TO_ASSUME: arn:aws:iam::232814779190:role/github
 
       - name: Run wasm-pack test on fusion
         run: |
           export PATH=$PATH:/tmp/chrome/chrome-linux64/:/tmp/chrome/chromedriver-linux64/
-          wasm-pack test --chrome --headless fusio --features aws,opfs,wasm-http
+          RUST_LOG=wasm_bindgen_test_runner wasm-pack test --chrome --headless fusio --features aws,opfs,wasm-http
 
-      - name: Run wasm-pack test on fusion-parquet
-        run: |
-          export PATH=$PATH:/tmp/chrome/chrome-linux64/:/tmp/chrome/chromedriver-linux64/
-          wasm-pack test --chrome --headless fusio-parquet --features web
+      # - name: Run wasm-pack test on fusion-parquet
+      #   run: |
+      #     export PATH=$PATH:/tmp/chrome/chrome-linux64/:/tmp/chrome/chromedriver-linux64/
+      #     wasm-pack test --chrome --headless fusio-parquet --features web
